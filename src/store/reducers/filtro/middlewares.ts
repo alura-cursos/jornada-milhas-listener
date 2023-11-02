@@ -18,13 +18,28 @@ filtroListener.startListening({
       origens: await origens.json(),
       destinos
     }));
-    
-    const quantidadeViagens = action.payload.viagens.length;
-
-    api.dispatch(criarSnackbar({
-      mensagem: `${quantidadeViagens} viage${quantidadeViagens > 1 ? 'ns' : 'm'} buscada com sucesso!`
-    }));
 
     api.unsubscribe();
+  }
+});
+
+filtroListener.startListening({
+  matcher: endpoints.getViagens.matchFulfilled,
+  effect: async (action, api) => {
+    const quantidadeViagens = action.payload.viagens.length;
+
+    const textoViagem = `viage${quantidadeViagens > 1 ? 'ns' : 'm'}`;
+    const textoBuscado = `buscada${quantidadeViagens > 1 ? 's' : ''}`;
+
+    if (quantidadeViagens >= 1) {
+      api.dispatch(criarSnackbar({
+        mensagem: `${quantidadeViagens} ${textoViagem} ${textoBuscado} com sucesso!`
+      }));
+    } else {
+      api.dispatch(criarSnackbar({
+        mensagem: 'Nenhuma viagem encontrada',
+        tipo: 'warning',
+      }))
+    }
   }
 })
