@@ -2,7 +2,8 @@ import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { baseUrl } from 'src/config/api';
 import { mudarFiltro } from './index';
 import { endpoints } from '../viagem/middlewares';
-import { criarSnackbar } from '../snackbar';
+import { criarSnackbar, deletarSnackbar } from '../snackbar';
+import uuid from 'react-native-uuid';
 
 export const filtroListener = createListenerMiddleware();
 
@@ -40,6 +41,28 @@ filtroListener.startListening({
         mensagem: 'Nenhuma viagem encontrada',
         tipo: 'warning',
       }))
+    }
+  }
+});
+
+filtroListener.startListening({
+  matcher: endpoints.getViagens.matchPending,
+  effect: async (action, api) => {
+    const id = String(uuid.v4());
+    api.dispatch(criarSnackbar({
+      mensagem: 'buscando viagem',
+      tipo: 'info',
+      id
+    }));
+
+    const tarefa = api.fork(async (forkApi) => {
+      await forkApi.delay(2000);
+    });
+
+    const resultado = await tarefa.result;
+
+    if (resultado.status === 'ok') {
+      api.dispatch(deletarSnackbar(id));
     }
   }
 })
