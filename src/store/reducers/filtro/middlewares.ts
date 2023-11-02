@@ -1,17 +1,20 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { baseUrl } from 'src/config/api';
 import { mudarFiltro } from './index';
+import { endpoints } from '../viagem/middlewares';
 
 export const filtroListener = createListenerMiddleware();
 
 filtroListener.startListening({
-  type: 'viagensApi/executeQuery/fulfilled',
+  matcher: endpoints.getViagens.matchFulfilled,
   effect: async (action, api) => {
-    const origens = await (await fetch(`${baseUrl}origens`)).json();
-    const destinos = await (await fetch(`${baseUrl}destinos`)).json();
+    const [origens, destinos] = await Promise.all([
+      fetch(`${baseUrl}origens`),
+      (await fetch(`${baseUrl}destinos`)).json()
+    ]);
 
     api.dispatch(mudarFiltro({
-      origens,
+      origens: await origens.json(),
       destinos
     }))
   }
