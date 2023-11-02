@@ -55,14 +55,11 @@ filtroListener.startListening({
       id
     }));
 
-    const tarefa = api.fork(async (forkApi) => {
+    api.fork(async (forkApi) => {
       await forkApi.delay(2000);
+      api.dispatch(deletarSnackbar(id));
     });
 
-    const resultado = await tarefa.result;
-
-    if (resultado.status === 'ok') {
-      api.dispatch(deletarSnackbar(id));
-    }
+    console.log('final')
   }
 })
