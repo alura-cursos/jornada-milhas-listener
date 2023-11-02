@@ -1,7 +1,7 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { baseUrl } from 'src/config/api';
 import { mudarFiltro } from './index';
-import { endpoints } from '../viagem/middlewares';
+import { endpoints, util } from '../viagem/middlewares';
 import { criarSnackbar, deletarSnackbar } from '../snackbar';
 import uuid from 'react-native-uuid';
 
@@ -60,6 +60,8 @@ filtroListener.startListening({
       api.dispatch(deletarSnackbar(id));
     });
 
-    console.log('final')
+    const queries = api.dispatch(util.getRunningQueriesThunk());
+
+    queries.map(query => query.abort());
   }
 })
