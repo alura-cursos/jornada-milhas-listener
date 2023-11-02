@@ -16,6 +16,8 @@ filtroListener.startListening({
     api.dispatch(mudarFiltro({
       origens: await origens.json(),
       destinos
-    }))
+    }));
+
+    api.unsubscribe();
   }
 })
