@@ -5,8 +5,9 @@ import filtro from './reducers/filtro';
 import snackbar from './reducers/snackbar';
 import createDebugger from 'redux-flipper';
 import { viagensApi } from './reducers/viagem/middlewares';
+import { filtroListener } from './reducers/filtro/middlewares';
 
-const middlewares: Middleware[] = [viagensApi.middleware];
+const middlewares: Middleware[] = [viagensApi.middleware, filtroListener.middleware];
 
 if (__DEV__) {
   middlewares.push(createDebugger());
